@@ -1,60 +1,77 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <title>repl.it</title>
-    <link href="style.css" rel="stylesheet" type="text/css" />
-    <style>
-      
-
-    </style>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <title>Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   </head>
+
   <body>
-    <h1>My Page</h1>
+    <nav>
+        <div class="nav-wrapper teal" style="padding-left: 10px;">
+           <a href="#!" class="brand-logo">Ajax Demo</a>
+        </div>
+    </nav>
+    <main class="row" style="height: 400px; overflow-y:scroll" style="padding: 40px">
+         <table >
+           <thead>
+                <tr>
+                   <th>#ID</th>
+                   <th>name</th>
+                   <th>Type</th>
+                   <th>website</th>
+                </tr>
+                </thead>
+                  <tbody id="result">
+                                                
+                  </tbody>
+           </table>
+     </main>
+     <pre id="details" style="background-color: gainsboro; margin: 20px; padding: 10px;">
 
-    <!-- <input type="button" id="alertBtn" value="alert" onclick="alertFun()"/>
-    <input type="button" value="confirm" onclick="confirmFun()"/>
-    <input type="button" value="prompt" onclick="promptFun()"/>
+     </pre>
+     <script>
 
-    <span id="result"></span> -->
+       function drawTable(records){
+          let result = document.querySelector('#result');
+          //add html code inside of result
+          let html = '';// create html string
+          for(let record of records){
+              //build html string
+              html += `<tr id="${record.id}">
+                <td>${record.id}</td>
+                <td>${record.name}</td>
+                <td>${record.brewery_type}</td>
+                <td><a href="#${record.id}" onclick="getData('https://api.openbrewerydb.org/breweries/${record.id}', drawDetails)" >View More Details</a></td>    
+              </tr>`;
+          }
+          result.innerHTML = html;//add html string to DOM
+      }
 
-    <!-- <input id="myBtn" type="button" onclick="myFun()" value="click me"/> -->
+      function drawDetails(record){
+        const details = document.querySelector('#details');
+        // details.innerHTML = `${JSON.stringify(record, null, 2)}`;
+        details.innerHTML = `<ul>
+              <li>State: ${record.state}</li>
+              <li>Country: ${record.country}</li>
+              <li>Phone: ${record.phone}</li>
+        </ul>`;
+      }
 
-    <img src="https://placecage.lucidinternets.com/200/300" alt="" onload="loaded()">
-
-    <script>
-
-    function loaded(event){
-      console.log("image loaded");
-    }
-
-      function myFun(){
-    alert("hello");  
-  }
-
-  function myFun2(){
-    console.log("myFun2 called");
-  }
-
- //receives the event parameter from addEventListener high order function
-  function logEventType(event){
-    console.log(event.type);
-  }
-
-  let myBtn = document.querySelector("#myBtn");
-
-  //attach myFun2 in addition to myFun to the click event of myBtn
-  myBtn.addEventListener("click", myFun2);
-
-  //There are other events such as mouseover and mouseout
-  
-  //Any callback passed to addeventListener receives an event object
-  myBtn.addEventListener("mouseover", logEventType);//logs 'mouseover'
-  myBtn.addEventListener("mouseout", logEventType);// logs 'mouseout'
- //these events will fire when the mouse pointer hovers/passes over the button
-
-    </script>
-    <script src="script.js"></script>
+      //function MUST be declared async
+      async function getData(url, renderFun){
+        try{
+          let response = await fetch(url);//1. Send http request and get response
+          let result = await response.json();//2. Get data from response
+          renderFun(result);// 3. Do something with the data
+        }catch(e){
+            console.log(e);//catch and log any errors
+        }
+      }
+      
+      getData("https://api.openbrewerydb.org/v1/breweries", drawTable)
+     
+     </script>
   </body>
 </html>
